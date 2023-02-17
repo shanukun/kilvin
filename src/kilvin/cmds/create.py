@@ -7,8 +7,7 @@ header = ''
 footer = '' 
 """
 
-ARCHE = """
----
+ARCHE = """---
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 draft: true
@@ -17,7 +16,7 @@ draft: true
 
 
 def gen_file(file_path, data):
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         f.write(data)
 
 
