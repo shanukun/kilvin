@@ -1,19 +1,21 @@
 import argparse
+import os
 import pathlib
 import shutil
-import os
-from livereload import Server
 import sys
+
+from livereload import Server
 
 from kilvin.cmds import build, create, new
 
 
 def clean():
-    for root, dirs, files in os.walk('./public'):
+    for root, dirs, files in os.walk("./public"):
         for f in files:
             os.unlink(os.path.join(root, f))
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
+
 
 def server():
     server = Server()
@@ -23,6 +25,7 @@ def server():
     except KeyboardInterrupt:
         print("Stop Server.")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
