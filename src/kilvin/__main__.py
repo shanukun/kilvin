@@ -7,13 +7,10 @@ from livereload import Server
 from kilvin import utils
 from kilvin.cmds import build, create, new
 
-
-def clean():
-    for root, dirs, files in os.walk("./public"):
-        for f in files:
-            os.unlink(os.path.join(root, f))
-        for d in dirs:
-            shutil.rmtree(os.path.join(root, d))
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 
 def server():
@@ -26,7 +23,18 @@ def server():
         sys.exit(1)
 
 
-if __name__ == "__main__":
+def load_config():
+    if not pathlib.Path("config.toml").exists():
+        print("Config file not found.")
+    with open("config.toml", "rb") as cf:
+        try:
+            config = tomllib.load(cf)
+            return config
+        except tomllib.TOMLDecodeError:
+            print("Something's wrong with the config file.")
+
+
+def main(config):
     parser = argparse.ArgumentParser(
         prog="Kilvin", description="A simple static site generator."
     )
@@ -59,3 +67,8 @@ if __name__ == "__main__":
         build.build_proj(config)
     elif args.cmd == "server":
         server()
+
+
+if __name__ == "__main__":
+    config = load_config()
+    main(config)
