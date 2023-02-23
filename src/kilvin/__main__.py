@@ -1,11 +1,10 @@
 import argparse
-import os
 import pathlib
-import shutil
 import sys
 
 from livereload import Server
 
+from kilvin import utils
 from kilvin.cmds import build, create, new
 
 
@@ -40,9 +39,9 @@ if __name__ == "__main__":
         "path", type=pathlib.Path, help="Path for the project directory. "
     )
 
-    parser_build = subparsers.add_parser("build", help="Build the current project.")
+    subparsers.add_parser("build", help="Build the current project.")
 
-    parser_build = subparsers.add_parser("server", help="Serve the current project.")
+    subparsers.add_parser("server", help="Serve the current project.")
 
     parser_new = subparsers.add_parser("new", help="Create a new markdow post.")
     parser_new.add_argument(
@@ -56,7 +55,7 @@ if __name__ == "__main__":
     elif args.cmd == "new":
         new.create_new_file(args.path)
     elif args.cmd == "build":
-        clean()
-        build.build_proj()
+        utils.clean_public()
+        build.build_proj(config)
     elif args.cmd == "server":
         server()
