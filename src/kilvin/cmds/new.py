@@ -1,8 +1,9 @@
 import datetime
 import os
 import pathlib
-import sys
 from string import Template
+
+from kilvin import utils
 
 FM = Template(
     """---
@@ -15,16 +16,8 @@ draft: True
 )
 
 
-def check_kilvin_dir():
-    cwd = pathlib.Path(".")
-    config_path = cwd / "config.toml"
-    if not config_path.exists():
-        print("Error: Unable to locate config file.")
-        sys.exit()
-
-
+@utils.is_kilvin_dir
 def create_new_file(path):
-    check_kilvin_dir()
     head, tail = os.path.split(path)
     now = datetime.datetime.now()
     today = now.strftime("%Y-%m-%d")
@@ -35,7 +28,7 @@ def create_new_file(path):
         head_path = content_path / pathlib.Path(head)
         head_path.mkdir()
     except FileExistsError:
-        pass
+        raise
 
     file_path = content_path / head / tail
     if file_path.exists():
