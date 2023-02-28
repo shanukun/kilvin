@@ -1,87 +1,111 @@
 import os
-import pathlib
+from pathlib import Path, PurePath
 
 import frontmatter
 
+from kilvin import utils
 from kilvin.mdown import markdown
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
 
 
-class CFile:
-    def __init__(self, name, rel_path):
-        self.name = name
-        self.rel_path = rel_path
+class Page:
+    def __init__(self, name, html_path, fmatter, body, is_index=False):
+        # content/{path}
+        self.url = name
+        self.save_path = html_path
+        self.meta = fmatter
+        self.body = body
+        self.is_index = is_index
 
-        self.stem = pathlib.Path(name).stem
-        self.ext = pathlib.PurePath(name).suffix
+        self._page_list = []
 
-        self.md_path = pathlib.PurePath(DIR_CONTENT) / self.rel_path / self.name
-        self.dir_path = pathlib.Path(DIR_PUBLIC) / self.rel_path / self.stem
+    def get_pages(self):
+        return self._page_list
 
-        self.fmatter = self._get_fmatter()
-        self.temp = "list.html" if self.stem == "_index" else "default.html"
-
-        self._make_dir()
-        self._copy_file()
-
-    def _get_fmatter(self):
-        return frontmatter.load(self.md_path)
-
-    def _make_dir(self):
-        if self.stem != "_index" and self.ext == ".md":
-            self.dir_path.mkdir()
-
-    def _copy_file(self):
-        if self.ext != ".md":
-            pass
-
-    def _gen_rel_path(self, p):
-        return self.rel_path / p
-
-    def get_file_list(self):
-        if self.stem == "_index":
-            p = pathlib.Path(DIR_CONTENT) / self.rel_path
-            return [
-                self._gen_rel_path(f.stem) if f.is_dir() else self._gen_rel_path(f.stem)
-                for f in p.iterdir()
-                if f.stem != self.stem
-            ]
-        else:
-            return []
-
-    def get_html_path(self):
-        if self.stem == "_index":
-            return (
-                pathlib.PurePath(DIR_PUBLIC)
-                / self.rel_path
-                / pathlib.PurePath("index.html")
-            )
-        else:
-            return self.dir_path / pathlib.PurePath("index.html")
+    def insert_page(self, page):
+        self._page_list.append(page)
 
 
-def build_proj():
-    md_files = []
-    for root, dirs, files in os.walk(DIR_CONTENT):
-        rel_cur_path = "/".join(list(pathlib.PurePath(root).parts)[1:])
+# content/pages/post.md -> ./pages/post.md
+def get_rel_path(full_path) -> Path:
+    return Path("/".join(list(full_path.parts)[1:]))
 
-        public_path = pathlib.Path(DIR_PUBLIC) / rel_cur_path
 
-        for dir in dirs:
-            dir_path = public_path / dir
+def build_dir(dir_path):
+    try:
+        if not dir_path.exists():
             dir_path.mkdir()
+    except FileExistsError:
+        print(f"{dir_path} already exists.")
+
+
+def gen_html_path(md_path):
+    file_name = md_path.name
+    rel_path = get_rel_path(md_path.parent)
+
+    final_path = Path(DIR_PUBLIC) / rel_path
+    build_dir(final_path)
+
+    html_file = "index.html"
+    if file_name == "_index.md":
+        return final_path / html_file
+    else:
+        index_dir = final_path / Path(file_name).stem
+        index_dir.mkdir()
+        return index_dir / html_file
+
+
+# file_path: ./content/*/file.md
+def process_md_file(file_path: Path, parent):
+    fmatter = frontmatter.load(file_path)
+
+    page = Page(
+        file_path.stem,
+        gen_html_path(file_path),
+        fmatter.metadata,
+        fmatter.content,
+        False if parent else True,
+    )
+    if parent:
+        parent.insert_page(page)
+    return page
+
+
+def process_non_md_file(file_path: Path):
+    rel_path = get_rel_path(file_path)
+    final_path = Path(DIR_PUBLIC) / rel_path
+    print(f"{file_path} - {final_path}")
+    utils.copy_file(file_path, final_path)
+
+
+@utils.is_kilvin_dir
+def build_proj(config):
+    content_path = Path(DIR_CONTENT)
+
+    page_list = []
+
+    # TODO recursive method extra info for dirs
+    for root, _, files in os.walk(content_path):
+        root_path = Path(root)
+        root_index = root_path / "_index.md"
+
+        root_page = None
+        if root_index.exists():
+            root_page = process_md_file(root_index, None)
+            page_list.append(root_page)
 
         for file in files:
-            rel_path = pathlib.Path(rel_cur_path)
-            md_files.append(CFile(file, rel_path))
+            file_path = root_path / Path(file)
 
-    for cfile in md_files:
-        out = markdown.render(
-            cfile.md_path, tmp=cfile.temp, files=cfile.get_file_list()
-        )
-        with open(cfile.get_html_path(), "w") as f:
-            f.write(out)
+            if file_path.suffix == ".md" and file_path.stem != "_index":
+                process_md_file(file_path, root_page)
+            elif file_path.suffix != ".md":
+                process_non_md_file(file_path)
+
+    markdown.render(page_list, config)
+
+    utils.copy_dir("./static", "./public/static")
 
     print("Building finished.")
