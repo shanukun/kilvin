@@ -33,5 +33,9 @@ def clean_public():
             fd.unlink()
 
 
-def copy_file(src, dst):
+def copy_dir(src, dst):
     shutil.copytree(src, dst)
+
+
+def copy_file(src, dst):
+    shutil.copyfile(src, dst)
