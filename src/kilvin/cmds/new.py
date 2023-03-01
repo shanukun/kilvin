@@ -2,6 +2,7 @@ import datetime
 import os
 import pathlib
 from string import Template
+from contextlib import suppress
 
 from kilvin import utils
 
@@ -24,11 +25,10 @@ def create_new_file(path):
 
     content_path = pathlib.Path("content")
 
-    try:
+    # create the dir for the new file if doesn't exist
+    with suppress(FileExistsError):
         head_path = content_path / pathlib.Path(head)
         head_path.mkdir()
-    except FileExistsError:
-        raise
 
     file_path = content_path / head / tail
     if file_path.exists():
