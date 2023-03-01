@@ -5,7 +5,7 @@ import sys
 from livereload import Server
 
 from kilvin import utils
-from kilvin.cmds import build, create, new
+from kilvin.cmds import build, init, new
 
 try:
     import tomllib
@@ -19,7 +19,6 @@ def server():
         print("Serving.")
         server.serve(root="./public")
     except KeyboardInterrupt:
-        print("Stop Server.")
         sys.exit(1)
 
 
@@ -59,7 +58,7 @@ def main(config):
     args = parser.parse_args()
 
     if args.cmd == "init":
-        create.init(args.path)
+        init.init(args.path)
     elif args.cmd == "new":
         new.create_new_file(args.path)
     elif args.cmd == "build":
