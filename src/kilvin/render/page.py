@@ -15,6 +15,17 @@ class Page:
         return self.page_list
 
     @property
+    def template(self):
+        templ = self.meta['template']
+        if templ != None:
+            return templ
+        elif self.is_index:
+            return "text.html"
+        else:
+            return "text.html"
+            
+
+    @property
     def dirs(self):
         return self.dir_list
 
