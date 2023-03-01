@@ -1,10 +1,12 @@
 import os
-from pathlib import Path, PurePath
+from pathlib import Path
 
 import frontmatter
 
 from kilvin import utils
 from kilvin.render import renderer
+from kilvin.render.page import Page
+from kilvin.utils import get_rel_path
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
@@ -56,7 +58,8 @@ def gen_html_path(md_path):
 def process_md_file(file_path: Path, parent):
     fmatter = frontmatter.load(file_path)
 
-    page = Page(
+    # unrendered page
+    raw_page = Page(
         file_path.stem,
         gen_html_path(file_path),
         fmatter.metadata,
@@ -64,8 +67,8 @@ def process_md_file(file_path: Path, parent):
         False if parent else True,
     )
     if parent:
-        parent.insert_page(page)
-    return page
+        parent.insert_page(raw_page)
+    return raw_page
 
 
 def process_non_md_file(file_path: Path):
@@ -75,16 +78,16 @@ def process_non_md_file(file_path: Path):
     utils.copy_file(file_path, final_path)
 
 
-@utils.is_kilvin_dir
-def build_proj(config):
+def seek_files():
+    """
+    Seek all the files in content dirs.
+    """
     content_path = Path(DIR_CONTENT)
 
     page_list = []
 
-    # TODO recursive method extra info for dirs
-    for root, _, files in os.walk(content_path):
+    for root, dirs, files in os.walk(content_path):
         root_path = Path(root)
-        root_index = root_path / "_index.md"
 
         root_index = join_path(root_path, _INDEX)
 
@@ -102,6 +105,21 @@ def build_proj(config):
             elif not is_index(file_path):
                 process_non_md_file(file_path)
 
+        for dir in dirs:
+            if root_page:
+                root_page.insert_dir(dir)
+
+    return page_list
+
+
+@utils.is_kilvin_dir
+def build_proj(config):
+    """
+    Build the site from content files.
+    """
+
+    page_list = seek_files()
+    print(page_list)
     renderer.render(page_list, config)
 
     utils.copy_dir("./static", "./public/static")
