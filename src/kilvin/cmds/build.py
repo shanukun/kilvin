@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 import frontmatter
 
 from kilvin import utils
-from kilvin.mdown import markdown
+from kilvin.render import renderer
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
@@ -104,7 +104,7 @@ def build_proj(config):
             elif file_path.suffix != ".md":
                 process_non_md_file(file_path)
 
-    markdown.render(page_list, config)
+    renderer.render(page_list, config)
 
     utils.copy_dir("./static", "./public/static")
 
