@@ -8,29 +8,26 @@ from kilvin.render import renderer
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
+_INDEX = "_index.md"
+INDEX = "index.html"
 
 
-class Page:
-    def __init__(self, name, html_path, fmatter, body, is_index=False):
-        # content/{path}
-        self.url = name
-        self.save_path = html_path
-        self.meta = fmatter
-        self.body = body
-        self.is_index = is_index
-
-        self._page_list = []
-
-    def get_pages(self):
-        return self._page_list
-
-    def insert_page(self, page):
-        self._page_list.append(page)
+def is_md(file):
+    file = Path(file)
+    return file.suffix == ".md"
 
 
-# content/pages/post.md -> ./pages/post.md
-def get_rel_path(full_path) -> Path:
-    return Path("/".join(list(full_path.parts)[1:]))
+def is_index(file):
+    file = Path(file)
+    return file.stem == "_index"
+
+
+def join_path(*paths):
+    return Path(*paths)
+
+
+def get_public_path(path):
+    return join_path(Path(DIR_PUBLIC), path)
 
 
 def build_dir(dir_path):
@@ -42,19 +39,17 @@ def build_dir(dir_path):
 
 
 def gen_html_path(md_path):
-    file_name = md_path.name
     rel_path = get_rel_path(md_path.parent)
+    final_path = get_public_path(rel_path)
 
-    final_path = Path(DIR_PUBLIC) / rel_path
     build_dir(final_path)
 
-    html_file = "index.html"
-    if file_name == "_index.md":
-        return final_path / html_file
+    if is_index(md_path):
+        return join_path(final_path, INDEX)
     else:
-        index_dir = final_path / Path(file_name).stem
+        index_dir = join_path(final_path, md_path.stem)
         index_dir.mkdir()
-        return index_dir / html_file
+        return join_path(index_dir, INDEX)
 
 
 # file_path: ./content/*/file.md
@@ -75,8 +70,8 @@ def process_md_file(file_path: Path, parent):
 
 def process_non_md_file(file_path: Path):
     rel_path = get_rel_path(file_path)
-    final_path = Path(DIR_PUBLIC) / rel_path
-    print(f"{file_path} - {final_path}")
+    final_path = get_public_path(rel_path)
+
     utils.copy_file(file_path, final_path)
 
 
@@ -91,17 +86,20 @@ def build_proj(config):
         root_path = Path(root)
         root_index = root_path / "_index.md"
 
+        root_index = join_path(root_path, _INDEX)
+
+        print(root_index)
         root_page = None
         if root_index.exists():
             root_page = process_md_file(root_index, None)
             page_list.append(root_page)
 
         for file in files:
-            file_path = root_path / Path(file)
+            file_path = join_path(root_path, Path(file))
 
-            if file_path.suffix == ".md" and file_path.stem != "_index":
+            if is_md(file_path) and not is_index(file_path):
                 process_md_file(file_path, root_page)
-            elif file_path.suffix != ".md":
+            elif not is_index(file_path):
                 process_non_md_file(file_path)
 
     renderer.render(page_list, config)
