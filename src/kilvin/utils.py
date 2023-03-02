@@ -40,7 +40,3 @@ def copy_dir(src, dst):
 
 def copy_file(src, dst):
     shutil.copyfile(src, dst)
-
-
-def get_rel_path(full_path) -> Path:
-    return Path("/".join(list(full_path.parts)[1:]))

@@ -1,7 +1,12 @@
+LIST = "list.html"
+SINGLE = "single.html"
+
+
 class Page:
-    def __init__(self, name, html_path, fmatter, body, is_index=False):
-        # content/{path}
-        self.url = name
+    def __init__(self, name, rel_path, html_path, fmatter, body, is_index=False):
+        self.name = name
+
+        self.rel_path = rel_path
         self.save_path = html_path
         self.meta = fmatter
         self.body = body
@@ -11,19 +16,26 @@ class Page:
         self.dir_list = []
 
     @property
+    def url(self):
+        return self.name
+
+    @property
     def pages(self):
         return self.page_list
 
     @property
+    def save_dir(self):
+        return self.save_path.parent
+
+    @property
     def template(self):
-        templ = self.meta['template']
+        templ = self.meta["template"]
         if templ != None:
             return templ
         elif self.is_index:
-            return "text.html"
+            return LIST
         else:
-            return "text.html"
-            
+            return SINGLE
 
     @property
     def dirs(self):

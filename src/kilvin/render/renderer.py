@@ -1,15 +1,31 @@
 import sys
 from collections import defaultdict
+from pathlib import Path
 
 import jinja2
-import random
 from markdown import Markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.toc import TocExtension
 
+from . import feed
+
+
+def is_same_path(path, other):
+    CONTENT = Path("./content")
+    path = CONTENT / Path(path)
+    other = CONTENT / Path(other)
+    return path.samefile(other)
+
 
 class Renderer:
+    """
+    Handles the rendering and saving of all markdown file with suitable context.
+    """
+
+    # Layout path in kilvin dir.
     LAYOUT = "layouts"
+
+    # Extensions required for converting markdown to html.
     EXTENSIONS = [
         CodeHiliteExtension(),
         TocExtension(),
@@ -44,7 +60,7 @@ class Renderer:
         self.tags.extend(page.meta.get("tags", ""))
         self.pages[page.template].append(page)
 
-    def build_site(self):
+    def get_site_context(self):
         site = {}
         for key, value in self.config.items():
             site[key] = value
@@ -53,14 +69,17 @@ class Renderer:
         return site
 
     def save_pages(self):
-        site = self.build_site()
+        site = self.get_site_context()
 
         for temp_name in self.pages:
             templ = self.get_template(temp_name)
             for page in self.pages[temp_name]:
                 sorted_pages = page.pages
-                sorted_pages.sort()
+                if page.is_index and not is_same_path(page.rel_path, "./"):
+                    sorted_pages.sort()
+                    feed.build_feed(self.config, sorted_pages, page.save_dir)
 
+                # TODO make template rendering part of render_markdown func.
                 out = templ.render(
                     cfg=site,
                     meta=page.meta,
@@ -75,7 +94,6 @@ class Renderer:
 def render(page_list, config):
     renderer = Renderer(config)
     for page in page_list:
-        print(page.url)
         renderer.render_markdown(page)
         for child_page in page.pages:
             renderer.render_markdown(child_page)

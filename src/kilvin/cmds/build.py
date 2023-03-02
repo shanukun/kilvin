@@ -6,7 +6,6 @@ import frontmatter
 from kilvin import utils
 from kilvin.render import renderer
 from kilvin.render.page import Page
-from kilvin.utils import get_rel_path
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
@@ -28,11 +27,18 @@ def join_path(*paths):
     return Path(*paths)
 
 
+def get_rel_path(full_path) -> Path:
+    return Path("/".join(list(full_path.parts)[1:]))
+
+
 def get_public_path(path):
     return join_path(Path(DIR_PUBLIC), path)
 
 
 def build_dir(dir_path):
+    """
+    Util func for creating directory with given path.
+    """
     try:
         if not dir_path.exists():
             dir_path.mkdir()
@@ -41,30 +47,48 @@ def build_dir(dir_path):
 
 
 def gen_html_path(md_path):
+    """
+    Create the required directories for pages.
+    > content/dir/blog.md -> public/dir/blog/index.html < and returns the path.
+    """
+
     rel_path = get_rel_path(md_path.parent)
     final_path = get_public_path(rel_path)
 
     build_dir(final_path)
 
     if is_index(md_path):
-        return join_path(final_path, INDEX)
+        html_path = join_path(final_path, INDEX)
     else:
         index_dir = join_path(final_path, md_path.stem)
-        index_dir.mkdir()
-        return join_path(index_dir, INDEX)
+        try:
+            index_dir.mkdir()
+        except FileExistsError:
+            pass
+        html_path = join_path(index_dir, INDEX)
+    return rel_path, html_path
 
 
-# file_path: ./content/*/file.md
 def process_md_file(file_path: Path, parent):
+    """
+    Process all markdown file found in content dir and create a raw page (Page) out
+    of it.
+
+    file_path: Path to a markdown file. Eg: ./content/*/file.md
+    parent: Refers to the Page object created from _index.md in directory.
+    """
     fmatter = frontmatter.load(file_path)
+
+    rel_path, html_path = gen_html_path(file_path)
 
     # unrendered page
     raw_page = Page(
-        file_path.stem,
-        gen_html_path(file_path),
-        fmatter.metadata,
-        fmatter.content,
-        False if parent else True,
+        name=file_path.stem if parent else rel_path,
+        rel_path=rel_path,
+        html_path=html_path,
+        fmatter=fmatter.metadata,
+        body=fmatter.content,
+        is_index=False if parent else True,
     )
     if parent:
         parent.insert_page(raw_page)
@@ -72,6 +96,10 @@ def process_md_file(file_path: Path, parent):
 
 
 def process_non_md_file(file_path: Path):
+    """
+    All the files other than markdown should be directly copied to appropriate
+    directory in public directory.
+    """
     rel_path = get_rel_path(file_path)
     final_path = get_public_path(rel_path)
 
@@ -87,11 +115,12 @@ def seek_files():
     page_list = []
 
     for root, dirs, files in os.walk(content_path):
+        # ./content/*/
         root_path = Path(root)
 
+        # ./content/*/_index.md
         root_index = join_path(root_path, _INDEX)
 
-        print(root_index)
         root_page = None
         if root_index.exists():
             root_page = process_md_file(root_index, None)
@@ -115,11 +144,10 @@ def seek_files():
 @utils.is_kilvin_dir
 def build_proj(config):
     """
-    Build the site from content files.
+    Build the site from content and static files.
     """
 
     page_list = seek_files()
-    print(page_list)
     renderer.render(page_list, config)
 
     utils.copy_dir("./static", "./public/static")
