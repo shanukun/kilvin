@@ -1,9 +1,13 @@
-CONFIG = """title = ''
-author = ''
-default-template = ''
+CONFIG_TEMP = """title = ''
+url = ''
+description = ''
+
+[author]
+    name = ''
+    email = ''
 """
 
-ARCHE = """---
+ARCHE_TEMP = """---
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 draft: true
@@ -29,8 +33,8 @@ def init(path):
             dir_path = abs_path / dir
             dir_path.mkdir()
 
-        gen_file(abs_path / CONFIG_FILE, CONFIG)
-        gen_file(abs_path / "layouts" / "default.md", ARCHE)
+        gen_file(abs_path / CONFIG_FILE, CONFIG_TEMP)
+        gen_file(abs_path / "layouts" / "default.md", ARCHE_TEMP)
 
         print(f"{path} directory for the project created.")
     except FileExistsError:
