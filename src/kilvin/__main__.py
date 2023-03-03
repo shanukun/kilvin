@@ -4,13 +4,9 @@ import sys
 
 from livereload import Server
 
+import kilvin
 from kilvin import utils
 from kilvin.cmds import build, init, new
-
-try:
-    import tomllib
-except ModuleNotFoundError:
-    import tomli as tomllib
 
 
 def server():
@@ -22,18 +18,7 @@ def server():
         sys.exit(1)
 
 
-def load_config():
-    if not pathlib.Path("config.toml").exists():
-        print("Config file not found.")
-    with open("config.toml", "rb") as cf:
-        try:
-            config = tomllib.load(cf)
-            return config
-        except tomllib.TOMLDecodeError:
-            print("Something's wrong with the config file.")
-
-
-def main(config):
+def main():
     parser = argparse.ArgumentParser(
         prog="Kilvin", description="A simple static site generator."
     )
@@ -63,11 +48,10 @@ def main(config):
         new.create_new_file(args.path)
     elif args.cmd == "build":
         utils.clean_public()
-        build.build_proj(config)
+        build.build_proj(kilvin.config)
     elif args.cmd == "server":
         server()
 
 
 if __name__ == "__main__":
-    config = load_config()
-    main(config)
+    main()
