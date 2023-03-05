@@ -81,7 +81,7 @@ class Renderer:
 
                 # TODO make template rendering part of render_markdown func.
                 out = templ.render(
-                    cfg=site,
+                    site=site,
                     meta=page.meta,
                     pages=sorted_pages,
                     dirs=page.dirs,
