@@ -1,0 +1,26 @@
+# [build-system]
+# requires = ["setuptools>=61.0"]
+# build-backend = "setuptools.build_meta"
+
+[project]
+name = "kilvin"
+version = "0.1"
+authors = [
+  { name="Pratham Singh", email="prathms007@gmail.com" },
+]
+# description = "A minimal static site generator."
+# readme = "README.md"
+# requires-python = ">=3.9"
+# classifiers = [
+#     "Programming Language :: Python :: 3",
+#     "License :: OSI Approved :: MIT License",
+#     "Operating System :: Linux",
+# ]
+# keywords = ["static site generator"]
+
+# [project.urls]
+# "Homepage" = "https://github.com/shanukun/kilvin"
+# "Bug Tracker" = "https://github.com/shanukun/kilvin/issues"
+
+[project.scripts]
+kilvin = "kilvin.__main__:main"
