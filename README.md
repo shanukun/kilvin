@@ -1,6 +1,6 @@
 # kilvin
 
-kilvin is a minimal static site generator.
+kilvin is a minimal static site generator (Linux only).
 
 - Minimal templating language
 - Minimal config with support for custom variables.
