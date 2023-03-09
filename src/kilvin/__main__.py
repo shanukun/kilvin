@@ -4,8 +4,7 @@ import sys
 
 from livereload import Server
 
-import kilvin
-from kilvin import utils
+from kilvin import configs, utils
 from kilvin.cmds import build, init, new
 
 
@@ -48,7 +47,7 @@ def main():
         new.create_new_file(args.path)
     elif args.cmd == "build":
         utils.clean_public()
-        build.build_proj(kilvin.config)
+        build.build_proj(configs.load_config())
     elif args.cmd == "server":
         server()
 
