@@ -134,7 +134,7 @@ date: 2022-28-09
 ...
 ```
 
-`layout` directory must have `single.md` and `list.md` as the default templates.
+`layout` directory must have `single.html` and `list.html` as the default templates.
 
 Non-index templates have access to the below objects:
 - site: date in config.toml
