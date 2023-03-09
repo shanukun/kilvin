@@ -1,8 +1,8 @@
 import datetime
 import os
 import pathlib
-from string import Template
 from contextlib import suppress
+from string import Template
 
 from kilvin import utils
 
@@ -36,4 +36,4 @@ def create_new_file(path):
     else:
         with open(file_path, "w") as f:
             f.write(FM.substitute(today=today))
-    print(f"Create {file_path}.")
+        print(f"Create {file_path}.")
