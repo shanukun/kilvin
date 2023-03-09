@@ -3,13 +3,13 @@ url = ''
 description = ''
 
 [author]
-    name = ''
-    email = ''
+name = ''
+email = ''
 """
 
 ARCHE_TEMP = """---
-title: "{{ replace .Name "-" " " | title }}"
-date: {{ .Date }}
+title: ""
+date: ""
 draft: true
 ---
 """
@@ -34,7 +34,7 @@ def init(path):
             dir_path.mkdir()
 
         gen_file(abs_path / CONFIG_FILE, CONFIG_TEMP)
-        gen_file(abs_path / "layouts" / "default.md", ARCHE_TEMP)
+        gen_file(abs_path / "archetypes" / "default.md", ARCHE_TEMP)
 
         print(f"{path} directory for the project created.")
     except FileExistsError:
