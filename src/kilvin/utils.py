@@ -20,6 +20,7 @@ def is_kilvin_dir(func):
     return wrapper
 
 
+@is_kilvin_dir
 def clean_public():
     path = pathlib.Path(DIR_PUBLIC)
 
