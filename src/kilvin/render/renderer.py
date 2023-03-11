@@ -75,8 +75,8 @@ class Renderer:
             templ = self.get_template(temp_name)
             for page in self.pages[temp_name]:
                 sorted_pages = page.pages
+                sorted_pages.sort()
                 if page.is_index and not is_same_path(page.rel_path, "./"):
-                    sorted_pages.sort()
                     feed.build_feed(self.config, sorted_pages, page.save_dir)
 
                 # TODO make template rendering part of render_markdown func.
