@@ -10,6 +10,7 @@ FM = Template(
     """---
 template:
 title:
+subtitle: 
 date: $today
 draft: True
 ---

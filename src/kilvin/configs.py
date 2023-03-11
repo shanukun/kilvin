@@ -27,7 +27,7 @@ def check_config(config):
         if not keys_exist(key):
             is_incomplete = True
             key_str = ".".join(key)
-            print(f"\"{key_str}\" not found in config.toml.")
+            print(f'"{key_str}" not found in config.toml.')
 
     if is_incomplete:
         sys.exit(1)

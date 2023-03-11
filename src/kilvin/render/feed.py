@@ -31,6 +31,6 @@ def build_feed(config, sorted_pages, save_path):
         feed.append(entry)
 
     xml_file = save_path / "index.xml"
-    
+
     with open(xml_file, "wb") as f:
         f.write(ET.tostring(feed, encoding="UTF-8", xml_declaration=True, method="xml"))

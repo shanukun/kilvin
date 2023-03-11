@@ -19,32 +19,32 @@ def server():
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="Kilvin", description="A simple static site generator."
+        prog="kilvin", description="A simple static site generator."
     )
     subparsers = parser.add_subparsers(dest="cmd", help="Help:")
 
     parser_init = subparsers.add_parser(
-        "init", help="Create directory structure for the project."
+        "init", help="create directory structure for the project"
     )
+    parser_new = subparsers.add_parser("new", help="create a new markdow post")
+
     parser_init.add_argument(
-        "path", type=pathlib.Path, help="Path for the project directory. "
+        "PATH", type=pathlib.Path, help="path for the project directory "
     )
-
-    subparsers.add_parser("build", help="Build the current project.")
-
-    subparsers.add_parser("server", help="Serve the current project.")
-
-    parser_new = subparsers.add_parser("new", help="Create a new markdow post.")
     parser_new.add_argument(
-        "path", type=pathlib.Path, help="Path for the markdown post. "
+        "PATH", type=pathlib.Path, help="path for the markdown post "
     )
+
+    subparsers.add_parser("build", help="build the current project")
+
+    subparsers.add_parser("server", help="serve the current project")
 
     args = parser.parse_args()
 
     if args.cmd == "init":
-        init.init(args.path)
+        init.init(args.PATH)
     elif args.cmd == "new":
-        new.create_new_file(args.path)
+        new.create_new_file(args.PATH)
     elif args.cmd == "build":
         utils.clean_public()
         build.build_proj(configs.load_config())
