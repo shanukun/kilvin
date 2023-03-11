@@ -1,3 +1,5 @@
+import sys
+
 LIST = "list.html"
 SINGLE = "single.html"
 
@@ -29,7 +31,12 @@ class Page:
 
     @property
     def template(self):
-        templ = self.meta["template"]
+        try:
+            templ = self.meta["template"]
+        except KeyError:
+            print(f"{self.name}.md does not have a correct frontmatter.")
+            sys.exit(1)
+
         if templ != None:
             return templ
         elif self.is_index:
