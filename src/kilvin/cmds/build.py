@@ -69,10 +69,10 @@ def gen_html_path(md_path):
     return rel_path, html_path
 
 
-def process_md_file(file_path: Path, parent):
+def process_md(file_path: Path, parent):
     """
-    Process all markdown file found in content dir and create a raw page (Page) out
-    of it.
+    Process all markdown file found in content dir and create a raw page (Page) 
+    out of it.
 
     file_path: Path to a markdown file. Eg: ./content/*/file.md
     parent: Refers to the Page object created from _index.md in directory.
@@ -95,7 +95,7 @@ def process_md_file(file_path: Path, parent):
     return raw_page
 
 
-def process_non_md_file(file_path: Path):
+def process_non_md(file_path: Path):
     """
     All the files other than markdown should be directly copied to appropriate
     directory in public directory.
@@ -106,39 +106,39 @@ def process_non_md_file(file_path: Path):
     utils.copy_file(file_path, final_path)
 
 
-def seek_files():
+def find_pages():
     """
     Seek all the files in content dirs.
     """
     content_path = Path(DIR_CONTENT)
 
-    page_list = []
+    pages = []
 
     for root, dirs, files in os.walk(content_path):
         # ./content/*/
         root_path = Path(root)
 
         # ./content/*/_index.md
-        root_index = join_path(root_path, _INDEX)
+        index_md = join_path(root_path, _INDEX)
 
-        root_page = None
-        if root_index.exists():
-            root_page = process_md_file(root_index, None)
-            page_list.append(root_page)
+        index_page = None
+        if index_md.exists():
+            index_page = process_md(index_md, None)
+            pages.append(index_page)
 
         for file in files:
             file_path = join_path(root_path, Path(file))
 
             if is_md(file_path) and not is_index(file_path):
-                process_md_file(file_path, root_page)
+                process_md(file_path, index_page)
             elif not is_index(file_path):
-                process_non_md_file(file_path)
+                process_non_md(file_path)
 
-        for dir in dirs:
-            if root_page:
-                root_page.insert_dir(dir)
+        if index_page:
+            for dir in dirs:
+                index_page.insert_dir(dir)
 
-    return page_list
+    return pages
 
 
 @utils.is_kilvin_dir
@@ -147,8 +147,8 @@ def build_proj(config):
     Build the site from content and static files.
     """
 
-    page_list = seek_files()
-    renderer.render(page_list, config)
+    pages = find_pages()
+    renderer.render(pages, config)
 
     utils.copy_dir("./static", "./public/static")
 

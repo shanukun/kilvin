@@ -8,7 +8,7 @@ from kilvin import configs, utils
 from kilvin.cmds import build, init, new
 
 
-def server():
+def start_server():
     server = Server()
     try:
         print("Serving.")
@@ -49,7 +49,7 @@ def main():
         utils.clean_public()
         build.build_proj(configs.load_config())
     elif args.cmd == "server":
-        server()
+        start_server()
 
 
 if __name__ == "__main__":
