@@ -3,6 +3,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import jinja2
+from jinja2.exceptions import TemplateError, TemplateNotFound
 from markdown import Markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.toc import TocExtension
@@ -50,7 +51,7 @@ class Renderer:
     def get_template(self, templt):
         try:
             return self.env.get_template(templt)
-        except jinja2.exceptions.TemplateNotFound:
+        except TemplateNotFound:
             print(f"Error: Template {templt} not found.")
             sys.exit(1)
 
@@ -73,22 +74,30 @@ class Renderer:
 
         for temp_name in self.pages:
             templ = self.get_template(temp_name)
+
             for page in self.pages[temp_name]:
                 sorted_pages = page.pages
                 sorted_pages.sort()
+
                 if page.is_index and not is_same_path(page.rel_path, "./"):
                     feed.build_feed(self.config, sorted_pages, page.save_dir)
 
-                # TODO make template rendering part of render_markdown func.
-                out = templ.render(
-                    site=site,
-                    meta=page.meta,
-                    pages=sorted_pages,
-                    dirs=page.dirs,
-                    body=page.body,
-                )
-                with open(page.save_path, "w") as f:
-                    f.write(out)
+                try:
+                    # TODO make template rendering part of render_markdown func.
+                    out = templ.render(
+                        site=site,
+                        meta=page.meta,
+                        pages=sorted_pages,
+                        dirs=page.dirs,
+                        body=page.body,
+                    )
+
+                    with open(page.save_path, "w") as f:
+                        f.write(out)
+
+                except TemplateError as e:
+                    print(f"{temp_name}: {e.message}.")
+                    sys.exit(1)
 
 
 def render(page_list, config):
