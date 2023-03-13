@@ -3,9 +3,9 @@ from pathlib import Path
 
 import frontmatter
 
-from kilvin import utils
 from kilvin.render import renderer
 from kilvin.render.page import Page
+from kilvin.utils import copy_dir, copy_file, is_kilvin_dir, join_path
 
 DIR_CONTENT = "content"
 DIR_PUBLIC = "public"
@@ -21,10 +21,6 @@ def is_md(file):
 def is_index(file):
     file = Path(file)
     return file.stem == "_index"
-
-
-def join_path(*paths):
-    return Path(*paths)
 
 
 def get_rel_path(full_path) -> Path:
@@ -71,7 +67,7 @@ def gen_html_path(md_path):
 
 def process_md(file_path: Path, parent):
     """
-    Process all markdown file found in content dir and create a raw page (Page) 
+    Process all markdown file found in content dir and create a raw page (Page)
     out of it.
 
     file_path: Path to a markdown file. Eg: ./content/*/file.md
@@ -103,7 +99,7 @@ def process_non_md(file_path: Path):
     rel_path = get_rel_path(file_path)
     final_path = get_public_path(rel_path)
 
-    utils.copy_file(file_path, final_path)
+    copy_file(file_path, final_path)
 
 
 def find_pages():
@@ -114,6 +110,7 @@ def find_pages():
 
     pages = []
 
+    prev_index = None
     for root, dirs, files in os.walk(content_path):
         # ./content/*/
         root_path = Path(root)
@@ -126,22 +123,27 @@ def find_pages():
             index_page = process_md(index_md, None)
             pages.append(index_page)
 
+        index_page = index_page if index_page else prev_index
+
         for file in files:
             file_path = join_path(root_path, Path(file))
 
             if is_md(file_path) and not is_index(file_path):
-                process_md(file_path, index_page)
+                raw_page = process_md(file_path, index_page)
+                if not index_page:
+                    pages.append(raw_page)
             elif not is_index(file_path):
                 process_non_md(file_path)
 
         if index_page:
             for dir in dirs:
                 index_page.insert_dir(dir)
+        prev_index = index_page
 
     return pages
 
 
-@utils.is_kilvin_dir
+@is_kilvin_dir
 def build_proj(config):
     """
     Build the site from content and static files.
@@ -150,6 +152,6 @@ def build_proj(config):
     pages = find_pages()
     renderer.render(pages, config)
 
-    utils.copy_dir("./static", "./public/static")
+    copy_dir("./static", "./public/static")
 
     print("Building finished.")
