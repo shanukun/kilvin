@@ -1,10 +1,11 @@
 import datetime
-import os
-import pathlib
 from contextlib import suppress
+from pathlib import Path
 from string import Template
 
-from kilvin import utils
+from kilvin.utils import is_kilvin_dir, join_path
+
+CONTENT = "content"
 
 FM = Template(
     """---
@@ -18,23 +19,27 @@ draft: True
 )
 
 
-@utils.is_kilvin_dir
-def create_new_file(path):
-    head, tail = os.path.split(path)
+@is_kilvin_dir
+def create_new_file(new_file):
+    new_file = Path(new_file)
+    new_dir, ext = new_file.parent, new_file.suffix
+
     now = datetime.datetime.now()
     today = now.strftime("%Y-%m-%d")
 
-    content_path = pathlib.Path("content")
+    content_path = Path(CONTENT)
 
     # create the dir for the new file if doesn't exist
     with suppress(FileExistsError):
-        head_path = content_path / pathlib.Path(head)
+        head_path = join_path(content_path, Path(new_dir))
         head_path.mkdir()
 
-    file_path = content_path / head / tail
-    if file_path.exists():
-        print("File already exists.")
-    else:
+    file_path = join_path(content_path, new_file)
+
+    try:
         with open(file_path, "w") as f:
-            f.write(FM.substitute(today=today))
+            if ext == ".md":
+                f.write(FM.substitute(today=today))
         print(f"Create {file_path}.")
+    except FileExistsError as e:
+        print(f"{e.filename} : {e.strerror}.")
