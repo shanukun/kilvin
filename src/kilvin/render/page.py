@@ -1,4 +1,5 @@
 import sys
+from kilvin.utils import join_path
 
 LIST = "list.html"
 SINGLE = "single.html"
@@ -19,7 +20,7 @@ class Page:
 
     @property
     def url(self):
-        return self.name
+        return join_path("/", self.rel_path, self.name)
 
     @property
     def pages(self):
