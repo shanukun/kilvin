@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+{{ body }}
+
+<table>
+    {% for page in pages %}
+    <tr>
+        <td><a href="{{ page.url}}">{{ page.meta.title }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

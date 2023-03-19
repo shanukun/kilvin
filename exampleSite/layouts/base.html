@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang=en>
+
+<head>
+    {% include "head.html" %}
+
+    <title>{{ meta.title }} -- {{ site.title }}</title>
+</head>
+
+<body>
+    <h2 class="heading">Kilvin Documentation</h2>
+    {% include "nav.html" %}
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        {% include "footer.html" %}
+    </footer>
+</body>
+
+</html>
