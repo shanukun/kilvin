@@ -6,7 +6,7 @@ date: 2023-03-09
 draft: True
 ---
 
-A simple static site generator is Kilvin. It takes markdown text and turns it 
+Kilvin is a simple static site generator. It takes markdown text and turns it 
 into a static webpage using layouts. Changes can be made to the page's content, 
 URLs, and the way the site looks.
 
