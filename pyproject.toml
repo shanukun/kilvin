@@ -32,3 +32,11 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
 
 [project.scripts]
 kilvin = "kilvin.__main__:main"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
