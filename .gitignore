@@ -5,3 +5,4 @@ exampleSite/public
 
 kilvin.egg-info/
 build/
+dist/
