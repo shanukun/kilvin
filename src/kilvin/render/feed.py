@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
-from kilvin.utils import join_path
 from datetime import datetime, timezone
+
+from kilvin.utils import join_path
 
 NAMESPACE = "http://www.w3.org/2005/Atom"
 
@@ -26,9 +27,7 @@ def build_feed(config, sorted_pages, save_path):
         link = "{}{}".format(config["url"], str(page.url))
         ET.SubElement(entry, "link", href=link)
 
-        ET.SubElement(
-            entry, "summary", type="html"
-        ).text = "<h2>{subtitle}</h2>{body}".format(
+        ET.SubElement(entry, "summary", type="html").text = "<h2>{subtitle}</h2>{body}".format(
             subtitle=page.meta["subtitle"], body=page.body
         )
         feed.append(entry)
