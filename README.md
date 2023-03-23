@@ -54,18 +54,22 @@ kilvin server
 Kilvin has several commands:
 
 ```
-usage: kilvin [-h] [init,build,server,new] ...
-A simple static site generator.
-positional arguments:
-  {init,build,server,new}
-                        Help:
-    init                Create directory structure for the project.
-    new                 Create a new markdow post.
-    build               Build the current project.
-    server              Serve the current project.
-optional arguments:
-  -h, --help            show this help message and exit
+Usage: kilvin [OPTIONS] COMMAND [ARGS]...
+
+  Kilvin is a simple static site generator. It takes markdown text and turns
+  it into a static webpage using layouts.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  build   Build the current project
+  init    Create directory structure for the project
+  new     Create a new markdow post in ./content dir
+  server  Serve the current project
 ```
+
 Here are some of the most common command:
 
 - `kilvin init PATH`: 

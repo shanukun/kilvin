@@ -22,6 +22,7 @@ dependencies = [
     "tomli",
     "python-frontmatter",
     "livereload",
+    "click",
 ]
 [project.optional-dependencies]
 dev = ["black", "bumpver", "isort", "pip-tools", "pytest"]
