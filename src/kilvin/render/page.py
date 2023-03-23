@@ -1,4 +1,6 @@
 import sys
+
+from kilvin import log
 from kilvin.utils import join_path
 
 LIST = "list.html"
@@ -35,7 +37,7 @@ class Page:
         try:
             templ = self.meta["template"]
         except KeyError:
-            print(f"{self.name}.md does not have a correct frontmatter.")
+            log.error(f"{self.name}.md does not have a correct frontmatter.")
             sys.exit(1)
 
         if templ != None:

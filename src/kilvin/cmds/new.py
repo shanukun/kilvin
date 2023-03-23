@@ -3,6 +3,7 @@ from contextlib import suppress
 from pathlib import Path
 from string import Template
 
+from kilvin import log
 from kilvin.utils import is_kilvin_dir, join_path
 
 CONTENT = "content"
@@ -40,6 +41,6 @@ def create_new_file(new_file):
         with open(file_path, "w") as f:
             if ext == ".md":
                 f.write(FM.substitute(today=today))
-        print(f"Create {file_path}.")
+        log.succ(f"{file_path} created.")
     except FileExistsError as e:
-        print(f"{e.filename} : {e.strerror}.")
+        log.error(f"{e.filename} : {e.strerror}.")

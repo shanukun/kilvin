@@ -13,7 +13,7 @@ from kilvin.cmds import new as _new
 def start_server():
     server = Server()
     try:
-        print("Serving.")
+        log.info("Serving.")
         server.serve(root="./public")
     except KeyboardInterrupt:
         sys.exit(1)

@@ -1,5 +1,7 @@
 import sys
 
+from kilvin import log
+
 try:
     import tomllib
 except ModuleNotFoundError:
@@ -27,7 +29,7 @@ def check_config(config):
         if not keys_exist(key):
             is_incomplete = True
             key_str = ".".join(key)
-            print(f'"{key_str}" not found in config.toml.')
+            log.error(f'"{key_str}" not found in config.toml.')
 
     if is_incomplete:
         sys.exit(1)
@@ -42,8 +44,8 @@ def load_config():
                 check_config(config)
                 return config
             except tomllib.TOMLDecodeError:
-                print("Something is wrong with the config file.")
+                log.error("Something is wrong with the config file.")
                 sys.exit(1)
     except FileNotFoundError as e:
-        print(f"{e.filename} : {e.strerror}. Please add it.")
+        log.error(f"{e.filename} : {e.strerror}. Please add it.")
         sys.exit(1)

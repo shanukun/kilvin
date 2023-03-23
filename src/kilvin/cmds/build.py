@@ -3,6 +3,7 @@ from pathlib import Path
 
 import frontmatter
 
+from kilvin import log
 from kilvin.render import renderer
 from kilvin.render.page import Page
 from kilvin.utils import copy_dir, copy_file, is_kilvin_dir, join_path
@@ -39,7 +40,7 @@ def build_dir(dir_path):
         if not dir_path.exists():
             dir_path.mkdir()
     except FileExistsError:
-        print(f"{dir_path} already exists.")
+        log.info(f"{dir_path} already exists.")
 
 
 def gen_html_path(md_path):
@@ -154,4 +155,4 @@ def build_proj(config):
 
     copy_dir("./static", "./public/static")
 
-    print("Building finished.")
+    log.succ("Building finished.")

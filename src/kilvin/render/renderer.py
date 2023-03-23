@@ -8,6 +8,8 @@ from markdown import Markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.toc import TocExtension
 
+from kilvin import log
+
 from . import feed
 
 
@@ -52,7 +54,7 @@ class Renderer:
         try:
             return self.env.get_template(templt)
         except TemplateNotFound:
-            print(f"Error: Template {templt} not found.")
+            log.error(f"Template {templt} not found.")
             sys.exit(1)
 
     def render_markdown(self, page):
@@ -96,7 +98,7 @@ class Renderer:
                         f.write(out)
 
                 except TemplateError as e:
-                    print(f"{temp_name}: {e.message}.")
+                    log.error(f"{temp_name}: {e.message}.")
                     sys.exit(1)
 
 
