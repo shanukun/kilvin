@@ -27,26 +27,31 @@ Kilvin requires the following:
 
 1. Install all prerequisites.
 1. Install the `kilvin`.
-```
-pip install kilvin
+
+```console
+$ pip install kilvin
 ```
 ### Create a site
 
 1. Create a new kilvin site at `./my_project`
-```
-kilvin init my_project
+
+```console
+$ kilvin init my_project
 ```
 2. Change into your new directory.
-```
-cd my_project
+
+```console
+$ cd my_project
 ```
 3. Build the site.
-```
-kilvin build
+
+```console
+$ kilvin build
 ```
 4. Make it available on local server.
-```
-kilvin server
+
+```console
+$ kilvin server
 ```
 
 ## Command Line
@@ -82,14 +87,14 @@ Here are some of the most common command:
 
         For `content/about.md`
 
-        ```
-        kilvin new about.md
+        ```console
+        $ kilvin new about.md
         ```
 
         For `content/blog/today.md`
 
-        ```
-        kilvin new blog/today.md
+        ```console
+        $ kilvin new blog/today.md
         ```
 
 - `kilvin build`:
@@ -108,10 +113,12 @@ Edit `config.toml` for changing the configuration for the project.
 ### Default Configuration
 
 Basic configuration required for building the site.
+
 ```
 title = 'My Blog'
 url = "https://myblog.xyb"
 description = 'My corner of the internet.'
+
 [author]
 name = "Kilvin"
 email = "kilvin@myblog.xyb"
@@ -123,6 +130,7 @@ Custom variables can also be defined in `config.toml`.
 
 ```
 var1 = 123
+
 [name1]
 var2 = "abcxyz"
 var3 = 123
@@ -186,8 +194,7 @@ source conent.
 
     Example:
 
-    <pre>
-    <code>
+    ```markdown
     ---
     template: single.html
     title: Why does it have to end?
@@ -199,8 +206,7 @@ source conent.
     
 
     markdown here
-    </code>
-    </pre>
+    ```
 
     - `template`, `tilte`, `subtitle` and `date` are mandatory.
     - If `template` field is empty, then default templates are used.
@@ -221,7 +227,7 @@ source conent.
 
 ### Layout
 
-- kilvin uses Jinj2 for templating.
+- kilvin uses Jinja2 for templating.
 - `./layout` contains the templates for the Pages.
 - `./layout` should have `list.html` and `single.html` as the default templates.
 
@@ -234,7 +240,7 @@ All the templates have access to a bunch of variables.
 - `body`: rendered markdown from the page
 - `pages`: (only available to index template) list of all the page in directory
 
-#### Usage
+#### Template Usage
 
 ```
 <!doctype html>
