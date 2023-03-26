@@ -51,12 +51,6 @@ class Page:
     def dirs(self):
         return self.dir_list
 
-    def insert_page(self, page):
-        self.page_list.append(page)
-
-    def insert_dir(self, dir):
-        self.dir_list.append(dir)
-
     def __lt__(self, other):
         try:
             return self.meta["date"] > other.meta["date"]

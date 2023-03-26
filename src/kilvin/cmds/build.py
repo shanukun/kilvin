@@ -87,8 +87,6 @@ def process_md(file_path: Path, parent):
         body=fmatter.content,
         is_index=False if parent else True,
     )
-    if parent:
-        parent.insert_page(raw_page)
     return raw_page
 
 
@@ -103,12 +101,36 @@ def process_non_md(file_path: Path):
     copy_file(file_path, final_path)
 
 
+def handle_index_file(root_path):
+    # ./content/*/_index.md
+    index_md = join_path(root_path, _INDEX)
+
+    index_page = None
+    if index_md.exists():
+        index_page = process_md(index_md, None)
+
+    return index_page
+
+
+def handle_files(files, root_path, index_page):
+    pages = []
+    for file in files:
+        file_path = join_path(root_path, Path(file))
+
+        if not is_md(file_path):
+            process_non_md(file_path)
+        elif not is_index(file_path):
+            raw_page = process_md(file_path, index_page)
+            pages.append(raw_page)
+
+    return pages
+
+
 def find_pages():
     """
     Seek all the files in content dirs.
     """
     content_path = Path(DIR_CONTENT)
-
     pages = []
 
     prev_index = None
@@ -116,29 +138,17 @@ def find_pages():
         # ./content/*/
         root_path = Path(root)
 
-        # ./content/*/_index.md
-        index_md = join_path(root_path, _INDEX)
-
-        index_page = None
-        if index_md.exists():
-            index_page = process_md(index_md, None)
-            pages.append(index_page)
-
-        index_page = index_page if index_page else prev_index
-
-        for file in files:
-            file_path = join_path(root_path, Path(file))
-
-            if is_md(file_path) and not is_index(file_path):
-                raw_page = process_md(file_path, index_page)
-                if not index_page:
-                    pages.append(raw_page)
-            elif not is_index(file_path):
-                process_non_md(file_path)
+        index_page = handle_index_file(root_path)
+        sub_pages = handle_files(files, root_path, index_page)
 
         if index_page:
-            for dir in dirs:
-                index_page.insert_dir(dir)
+            index_page.page_list.extend(sub_pages)
+            index_page.dir_list.extend(dirs)
+            pages.append(index_page)
+        else:
+            pages.extend(sub_pages)
+            index_page = prev_index
+
         prev_index = index_page
 
     return pages
