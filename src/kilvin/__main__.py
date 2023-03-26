@@ -1,22 +1,12 @@
 import pathlib
-import sys
 
 import click
-from livereload import Server
 
 from kilvin import configs, utils
 from kilvin.cmds import build as _build
 from kilvin.cmds import init as _init
 from kilvin.cmds import new as _new
-
-
-def start_server():
-    server = Server()
-    try:
-        log.info("Serving.")
-        server.serve(root="./public")
-    except KeyboardInterrupt:
-        sys.exit(1)
+from kilvin.cmds import server as _server
 
 
 def main():
@@ -50,6 +40,6 @@ def main():
     @cli.command()
     def server():
         """Serve the current project"""
-        start_server()
+        _server.start_server()
 
     cli()

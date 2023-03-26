@@ -21,7 +21,6 @@ dependencies = [
     "Jinja2",
     "tomli",
     "python-frontmatter",
-    "livereload",
     "click",
 ]
 [project.optional-dependencies]
