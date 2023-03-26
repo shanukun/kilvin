@@ -55,10 +55,3 @@ Here are some of the most common command:
 
 - `kilvin server`:
     - Serves the site locally.
-
-
-
-
-
-
-

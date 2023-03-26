@@ -6,6 +6,7 @@ date: 2023-03-09
 draft: True
 ---
 
+[TOC]
 
 kilvin organize the rendered site in the same structure that is used to organize the 
 source conent.
@@ -55,19 +56,17 @@ source conent.
 
     Example:
 
-    <div>
-    <p>---</p>
-    <p>template: single.html</p>
-    <p>title: Why does it have to end?</p>
-    <p>subtile: A survivor dies.</p>
-    <p>date: 2022-28-09</p>
+    <div class="codehilte">
+    <pre><code>---
+    template: single.html
+    title: Why does it have to end?
+    subtile: A survivor dies.
+    date: 2022-28-09
     <p>---</p>
 
     <p>[TOC]</p>
-    
-
-    <p>markdown here</p>
-    </div>
+    ...markdown here
+    </code></pre></div>
 
     - `template`, `tilte`, `subtitle` and `date` are mandatory.
     - If `template` field is empty, then default templates are used.
@@ -122,12 +121,4 @@ All the templates have access to a bunch of variables.
     </section>
   </body>
 </html>
-
 ```
-
-
-
-
-
-
-

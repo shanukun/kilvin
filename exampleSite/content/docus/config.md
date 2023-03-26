@@ -6,8 +6,6 @@ date: 2023-03-11
 draft: True
 ---
 
-[TOC]
-
 Edit `config.toml` for changing the configuration for the project. 
 
 ## Default Configuration
