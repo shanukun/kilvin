@@ -29,6 +29,11 @@ class Page:
         return self.page_list
 
     @property
+    def sorted_pages(self):
+        self.page_list.sort()
+        return self.pages
+
+    @property
     def save_dir(self):
         return self.save_path.parent
 
@@ -37,7 +42,7 @@ class Page:
         try:
             templ = self.meta["template"]
         except KeyError:
-            log.error(f"{self.name}.md does not have a correct frontmatter.")
+            log.error(f"{self.name}.md: Invalid front matter.")
             sys.exit(1)
 
         if templ != None:
@@ -50,12 +55,6 @@ class Page:
     @property
     def dirs(self):
         return self.dir_list
-
-    def insert_page(self, page):
-        self.page_list.append(page)
-
-    def insert_dir(self, dir):
-        self.dir_list.append(dir)
 
     def __lt__(self, other):
         try:

@@ -6,7 +6,7 @@ from kilvin.utils import join_path
 NAMESPACE = "http://www.w3.org/2005/Atom"
 
 
-def build_feed(config, sorted_pages, save_path):
+def build(config, sorted_pages, save_path):
     feed = ET.Element("feed", xmlns=NAMESPACE)
     ET.SubElement(feed, "title").text = config["title"]
     ET.SubElement(feed, "id").text = config["url"]
