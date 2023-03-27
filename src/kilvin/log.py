@@ -6,9 +6,8 @@ import click
 def pretty_print(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        click.secho("\n===")
+        click.secho("")
         func(*args, **kwargs)
-        click.secho("===\n")
 
     return wrapper
 
@@ -20,7 +19,7 @@ def succ(msg):
 
 @pretty_print
 def info(msg):
-    click.secho(msg)
+    click.secho(msg, fg="cyan")
 
 
 @pretty_print
