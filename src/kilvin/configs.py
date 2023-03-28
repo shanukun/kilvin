@@ -38,7 +38,6 @@ def check_config(config):
 def load_config():
     try:
         with open("config.toml", "rb") as cf:
-            pass
             try:
                 config = tomllib.load(cf)
                 check_config(config)
