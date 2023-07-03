@@ -1,8 +1,6 @@
 .env/
 __pycache__/
 
-exampleSite/public
-
 kilvin.egg-info/
 build/
 dist/
